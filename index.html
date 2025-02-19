@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Division as Fractions Game</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin-top: 50px;
+        }
+        .game-container {
+            display: inline-block;
+            padding: 20px;
+            border: 2px dotted black;
+        }
+        .fraction-input {
+            display: inline-flex;
+            flex-direction: column;
+            align-items: center;
+            margin-left: 10px;
+        }
+        .input-box {
+            width: 40px;
+            text-align: center;
+            appearance: textfield;
+            -moz-appearance: textfield;
+        }
+        .input-box::-webkit-outer-spin-button,
+        .input-box::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        .fraction-line {
+            width: 40px;
+            height: 2px;
+            background-color: black;
+            margin: 2px 0;
+        }
+        .question-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <h2>Division of Whole Numbers as Fractions</h2>
+        <div class="question-container">
+            <p id="question"></p>
+            <div class="fraction-input">
+                <input type="text" id="numerator" class="input-box">
+                <div class="fraction-line"></div>
+                <input type="text" id="denominator" class="input-box">
+            </div>
+        </div>
+        <br><br>
+        <button onclick="checkAnswer()">Submit</button>
+        <p id="feedback"></p>
+        <p>Score: <span id="score">0</span></p>
+    </div>
+
+    <script>
+        let score = 0;
+        let currentQuestion;
+        const predefinedPairs = [
+            [3, 9], [6, 9], [2, 4], [5, 10], [2, 10], [4, 10]
+        ];
+        
+        function gcd(a, b) {
+            return b === 0 ? a : gcd(b, a % b);
+        }
+
+        function generateQuestion() {
+            let randomIndex = Math.floor(Math.random() * predefinedPairs.length);
+            let [num1, num2] = predefinedPairs[randomIndex];
+            
+            currentQuestion = { numerator: num1, denominator: num2 };
+            document.getElementById("question").innerText = `${num1} ÷ ${num2} = `;
+            document.getElementById("numerator").value = "";
+            document.getElementById("denominator").value = "";
+        }
+
+        function checkAnswer() {
+            let userNum = parseInt(document.getElementById("numerator").value);
+            let userDen = parseInt(document.getElementById("denominator").value);
+            
+            let actualNum = currentQuestion.numerator;
+            let actualDen = currentQuestion.denominator;
+            
+            let simplifiedNum = actualNum;
+            let simplifiedDen = actualDen;
+            let commonFactor = gcd(simplifiedNum, simplifiedDen);
+            simplifiedNum /= commonFactor;
+            simplifiedDen /= commonFactor;
+            
+            if (userNum === simplifiedNum && userDen === simplifiedDen) {
+                document.getElementById("feedback").innerText = "Correct!";
+                score++;
+            } else {
+                document.getElementById("feedback").innerText = `Wrong! The correct answer is ${simplifiedNum} / ${simplifiedDen}`;
+                score = 0;
+            }
+            document.getElementById("score").innerText = score;
+            generateQuestion();
+        }
+
+        generateQuestion();
+    </script>
+</body>
+</html>
